@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { api } from "~/utils/api";
 import { WishList } from "@prisma/client";
-import { undefined } from "zod";
+import { Header } from "./Header";
 
 const giftFormInputs = {
   name: {
@@ -73,7 +73,7 @@ export const GiftInputForm: FunctionComponent<GiftInputFormProps> = (props) => {
 
   return (
     <div className="border-2 border-solid border-yellow-600 p-2 text-white">
-      <h1>Add New Gift</h1>
+      <Header variant={1}>Add New Gift</Header>
       <form onSubmit={submitGift}>
         <fieldset
           className="text-black"
