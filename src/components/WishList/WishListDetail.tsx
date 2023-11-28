@@ -4,7 +4,7 @@ import { GiftInputForm } from "./GiftInputForm";
 import { type FunctionComponent } from "react";
 import { type Gift } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { Header } from "./Header";
+import { Header } from "../Header";
 
 type GiftDetailProps = {
   gift: Gift;
@@ -26,7 +26,11 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
     },
   });
 
-  const giftMoveMutation = api.gift.move.useMutation();
+  const giftMoveMutation = api.gift.move.useMutation({
+    onSettled: async () => {
+      await utils.gift.getWishListGifts.invalidate();
+    },
+  });
 
   function deleteGift() {
     giftDeleteMutation.mutate({
@@ -41,7 +45,7 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
   }
 
   function moveGift(direction: "up" | "down") {
-    let newPosition = 0;
+    let newPosition = 1;
     if (direction === "up") newPosition = gift.position - 1;
     if (direction === "down") newPosition = gift.position + 1;
 
@@ -59,7 +63,9 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
           <span> - </span>
           {sessionData.user.id === gift.userId && (
             <>
-              <span onClick={() => moveGift("up")}>Up</span>
+              <span onClick={() => moveGift("up")}>⬆️</span>
+              <span onClick={() => moveGift("down")}>⬇️</span>
+              {" - "}
               <span
                 className="cursor-pointer text-red-600"
                 onClick={deleteGift}
@@ -79,22 +85,33 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
   );
 };
 
-export const WishListDetail = () => {
-  const { data: sessionData } = useSession();
+export const WishListRouter = () => {
   const router = useRouter();
   const wishListId =
     router.query.slug &&
     Array.isArray(router.query.slug) &&
     router.query.slug[0];
 
-  if (typeof wishListId !== "string") return <div>Nope</div>;
+  if (typeof wishListId !== "string") return <div>No wishListId</div>;
 
+  return <WishListDetail wishListId={wishListId} />;
+};
+
+type WishListDetailProps = {
+  wishListId: string;
+};
+
+export const WishListDetail: FunctionComponent<WishListDetailProps> = (
+  props
+) => {
+  const { wishListId } = props;
+  const { data: sessionData } = useSession();
   const { data: wishList } = api.wishList.getWishList.useQuery({ wishListId });
   const { data: wishListGifts } = api.gift.getWishListGifts.useQuery({
     wishListId,
   });
 
-  if (!wishList) return <div>Nope</div>;
+  if (!wishList) return <div>No wishlist found</div>;
 
   return (
     <div className="text-white">

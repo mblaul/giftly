@@ -2,7 +2,7 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Link from "next/link";
-import { Header } from "./Header";
+import { Header } from "../Header";
 
 const wishListFormInputs = {
   name: {

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { api } from "~/utils/api";
 import { Gift, WishList } from "@prisma/client";
-import { Header } from "./Header";
+import { Header } from "../Header";
 
 const giftFormInputs = {
   name: {
@@ -61,7 +61,7 @@ export const GiftInputForm: FunctionComponent<GiftInputFormProps> = (props) => {
       name: giftInput.name,
       link: giftInput.link,
       wishListId: wishList.id,
-      position: wishListLength,
+      position: wishListLength > 0 ? wishListLength : 1,
     });
 
     setIsSubmitting(false);

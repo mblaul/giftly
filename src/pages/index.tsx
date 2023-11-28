@@ -2,7 +2,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import BottomMenu from "~/components/BottomMenu/BottomMenu";
 import { Header } from "~/components/Header";
-import { WishLists } from "~/components/WishLists";
+import { WishLists } from "~/components/WishList/WishLists";
 
 export default function Home() {
   return (

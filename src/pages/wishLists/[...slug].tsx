@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { WishListDetail } from "~/components/WishListDetail";
+import { WishListRouter } from "~/components/WishList/WishListDetail";
 
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <WishListDetail />
+        <WishListRouter />
       </main>
     </>
   );
