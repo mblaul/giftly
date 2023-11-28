@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { api } from "~/utils/api";
-import { WishList } from "@prisma/client";
+import { Gift, WishList } from "@prisma/client";
 import { Header } from "./Header";
 
 const giftFormInputs = {
@@ -24,16 +24,11 @@ const giftFormInputs = {
 
 type GiftInputFormProps = {
   wishList: WishList;
-};
-
-type GiftInput = {
-  name: string;
-  link?: string;
-  wishListId?: string;
+  wishListLength: number;
 };
 
 export const GiftInputForm: FunctionComponent<GiftInputFormProps> = (props) => {
-  const { wishList } = props;
+  const { wishList, wishListLength } = props;
 
   const utils = api.useContext();
   const giftMutation = api.gift.create.useMutation({
@@ -66,7 +61,9 @@ export const GiftInputForm: FunctionComponent<GiftInputFormProps> = (props) => {
       name: giftInput.name,
       link: giftInput.link,
       wishListId: wishList.id,
+      position: wishListLength,
     });
+
     setIsSubmitting(false);
     setGiftInput(initialGiftInputState);
   }

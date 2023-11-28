@@ -26,6 +26,8 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
     },
   });
 
+  const giftMoveMutation = api.gift.move.useMutation();
+
   function deleteGift() {
     giftDeleteMutation.mutate({
       giftId: gift.id,
@@ -38,16 +40,33 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
     });
   }
 
+  function moveGift(direction: "up" | "down") {
+    let newPosition = 0;
+    if (direction === "up") newPosition = gift.position - 1;
+    if (direction === "down") newPosition = gift.position + 1;
+
+    giftMoveMutation.mutate({
+      giftId: gift.id,
+      position: newPosition,
+    });
+  }
+
   return (
     <div>
-      {gift.name} - {gift.link}
+      {gift.position} - {gift.name} - {gift.link}
       {sessionData?.user.id && (
         <>
           <span> - </span>
           {sessionData.user.id === gift.userId && (
-            <span className="cursor-pointer text-red-600" onClick={deleteGift}>
-              Delete
-            </span>
+            <>
+              <span onClick={() => moveGift("up")}>Up</span>
+              <span
+                className="cursor-pointer text-red-600"
+                onClick={deleteGift}
+              >
+                Delete
+              </span>
+            </>
           )}
           {sessionData.user.id !== gift.userId && (
             <span className="cursor-pointer text-green-600" onClick={claimGift}>
@@ -81,7 +100,10 @@ export const WishListDetail = () => {
     <div className="text-white">
       <Header variant={1}>{wishList.name}</Header>
       {sessionData && sessionData.user.id === wishList.userId && (
-        <GiftInputForm wishList={wishList} />
+        <GiftInputForm
+          wishList={wishList}
+          wishListLength={wishListGifts?.length ?? 0}
+        />
       )}
       {wishListGifts?.map((wishListGift) => {
         return <GiftDetail key={wishListGift.id} gift={wishListGift} />;

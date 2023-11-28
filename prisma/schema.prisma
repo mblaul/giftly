@@ -64,18 +64,18 @@ model VerificationToken {
 }
 
 model Gift {
-    id               String   @id @default(cuid())
-    name             String
-    link             String?
-    fromUserId       String?
-    fromUser         User?    @relation("GivenGifts", fields: [fromUserId], references: [id], onDelete: Cascade)
-    userId           String
-    user             User     @relation("ReceivedGifts", fields: [userId], references: [id], onDelete: Cascade)
-    wishListId       String
-    wishList         WishList @relation(fields: [wishListId], references: [id], onDelete: Cascade)
-    wishListPosition Int
+    id         String   @id @default(cuid())
+    name       String
+    link       String?
+    fromUserId String?
+    fromUser   User?    @relation("GivenGifts", fields: [fromUserId], references: [id], onDelete: Cascade)
+    userId     String
+    user       User     @relation("ReceivedGifts", fields: [userId], references: [id], onDelete: Cascade)
+    wishListId String
+    wishList   WishList @relation(fields: [wishListId], references: [id], onDelete: Cascade)
+    position   Int
 
-    @@unique([wishListId, wishListPosition])
+    @@unique([wishListId, position])
 }
 
 model WishList {

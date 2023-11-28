@@ -38,7 +38,7 @@ async function seedGifts(wishList: WishList) {
         link: `https://www.google.com/search?q=${position}`,
         userId: wishList.userId,
         wishListId: wishList.id,
-        wishListPosition: position,
+        position,
       },
     });
     gifts.push(gift);
