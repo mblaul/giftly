@@ -8,9 +8,10 @@ import { Header } from "../Header";
 
 type GiftDetailProps = {
   gift: Gift;
+  wishListLength: number;
 };
 const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
-  const { gift } = props;
+  const { gift, wishListLength } = props;
   const { data: sessionData } = useSession();
   const utils = api.useContext();
 
@@ -35,6 +36,7 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
   function deleteGift() {
     giftDeleteMutation.mutate({
       giftId: gift.id,
+      wishListId: gift.wishListId,
     });
   }
 
@@ -63,8 +65,12 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
           <span> - </span>
           {sessionData.user.id === gift.userId && (
             <>
-              <span onClick={() => moveGift("up")}>⬆️</span>
-              <span onClick={() => moveGift("down")}>⬇️</span>
+              {gift.position > 1 && (
+                <span onClick={() => moveGift("up")}>⬆️</span>
+              )}
+              {gift.position < wishListLength && (
+                <span onClick={() => moveGift("down")}>⬇️</span>
+              )}
               {" - "}
               <span
                 className="cursor-pointer text-red-600"
@@ -123,7 +129,13 @@ export const WishListDetail: FunctionComponent<WishListDetailProps> = (
         />
       )}
       {wishListGifts?.map((wishListGift) => {
-        return <GiftDetail key={wishListGift.id} gift={wishListGift} />;
+        return (
+          <GiftDetail
+            key={wishListGift.id}
+            gift={wishListGift}
+            wishListLength={wishListGifts.length}
+          />
+        );
       })}
     </div>
   );

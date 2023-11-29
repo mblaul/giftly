@@ -1,3 +1,5 @@
+import { Gift, Prisma } from "@prisma/client";
+
 export function recalculatePositions(
   listItemPosition: number,
   newListItemPosition: number
@@ -8,7 +10,6 @@ export function recalculatePositions(
     // Item has been moved up
     const moveLength = listItemPosition - newListItemPosition;
     const newPositions = new Map<number, number>();
-    // newPositions.set(listItemPosition, newListItemPosition);
     for (
       let i = newListItemPosition;
       i < newListItemPosition + moveLength;
@@ -20,16 +21,32 @@ export function recalculatePositions(
   }
   if (listItemPosition < newListItemPosition) {
     // Item has been moved down
-    const moveLength = newListItemPosition - listItemPosition;
     const newPositions = new Map<number, number>();
-    // newPositions.set(listItemPosition, newListItemPosition);
-    for (
-      let i = newListItemPosition;
-      i > newListItemPosition - moveLength;
-      i--
-    ) {
-      newPositions.set(i, i - 1);
+    for (let i = listItemPosition; i < newListItemPosition; i++) {
+      newPositions.set(i + 1, i);
     }
     return newPositions;
+  }
+}
+
+export async function repositionAdjacentItems(
+  ctx: any,
+  gift: Gift,
+  newGiftPosition: number
+) {
+  const newPositions = recalculatePositions(gift.position, newGiftPosition);
+
+  if (!newPositions) return;
+
+  for (const [oldPosition, newPosition] of newPositions.entries()) {
+    await ctx.prisma.gift.update({
+      where: {
+        wishListId_position: {
+          wishListId: gift.wishListId,
+          position: oldPosition,
+        },
+      },
+      data: { position: newPosition },
+    });
   }
 }

@@ -61,7 +61,7 @@ export const GiftInputForm: FunctionComponent<GiftInputFormProps> = (props) => {
       name: giftInput.name,
       link: giftInput.link,
       wishListId: wishList.id,
-      position: wishListLength > 0 ? wishListLength : 1,
+      position: wishListLength > 0 ? wishListLength + 1 : 1,
     });
 
     setIsSubmitting(false);

@@ -4,7 +4,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { recalculatePositions } from "~/utils/list";
+import { recalculatePositions, repositionAdjacentItems } from "~/utils/list";
 
 export const giftRouter = createTRPCRouter({
   create: protectedProcedure
@@ -17,22 +17,37 @@ export const giftRouter = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
-      // TODO: Add wishListPosition logic
       return ctx.prisma.gift.create({
         data: { ...input, userId: ctx.session.user.id },
       });
     }),
 
   delete: protectedProcedure
-    .input(z.object({ giftId: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.gift
+    .input(z.object({ giftId: z.string(), wishListId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const wishListLength = await ctx.prisma.gift.count({
+        where: { wishListId: input.wishListId },
+      });
+
+      const gift = await ctx.prisma.gift.findUnique({
+        where: { id: input.giftId },
+      });
+
+      if (!gift) throw new Error("No gift found");
+
+      // Delete the gift to free up the position value
+      await ctx.prisma.gift
         .delete({
           where: { id: input.giftId, userId: ctx.session.user.id },
         })
-        .catch((err) => {
+        .catch(() => {
           return new Error("You are not allowed to delete this gift");
         });
+
+      // No re-positioning needed if at the end of the list
+      if (gift.position === wishListLength) return;
+
+      await repositionAdjacentItems(ctx, gift, wishListLength);
     }),
   claim: protectedProcedure
     .input(z.object({ giftId: z.string() }))
@@ -54,8 +69,11 @@ export const giftRouter = createTRPCRouter({
         });
     }),
   move: protectedProcedure
-    .input(z.object({ giftId: z.string(), position: z.number().gte(0) }))
+    .input(z.object({ giftId: z.string(), position: z.number() }))
     .mutation(async ({ ctx, input }) => {
+      if (input.position < 1)
+        throw new Error("Position values need to be greater than 0");
+
       const gift = await ctx.prisma.gift.findUnique({
         where: { id: input.giftId },
       });
@@ -63,9 +81,12 @@ export const giftRouter = createTRPCRouter({
       if (!gift || typeof gift.position !== "number")
         throw new Error("No gift found");
 
-      const direction = gift.position > input.position ? "down" : "up";
+      const wishListLength = await ctx.prisma.gift.count({
+        where: { wishListId: gift.wishListId },
+      });
 
-      const newPositions = recalculatePositions(gift.position, input.position);
+      if (input.position > wishListLength)
+        throw new Error("Position values cannot exceed the wish list size");
 
       // Put gift into temporary position
       await ctx.prisma.gift.update({
@@ -73,20 +94,7 @@ export const giftRouter = createTRPCRouter({
         data: { position: -1 },
       });
 
-      // Loop over and update positions
-
-      if (!newPositions) throw new Error("No position updates");
-      for (const [oldPosition, newPosition] of newPositions.entries()) {
-        await ctx.prisma.gift.update({
-          where: {
-            wishListId_position: {
-              wishListId: gift.wishListId,
-              position: oldPosition,
-            },
-          },
-          data: { position: newPosition },
-        });
-      }
+      await repositionAdjacentItems(ctx, gift, input.position);
 
       return await ctx.prisma.gift.update({
         where: { id: input.giftId },
