@@ -14,12 +14,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -48,13 +42,17 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id              String                   @id @default(cuid())
+    name            String?
+    email           String?                  @unique
+    emailVerified   DateTime?
+    image           String?
+    accounts        Account[]
+    sessions        Session[]
+    givenGifts      Gift[]                   @relation("GivenGifts")
+    recievedGifts   Gift[]                   @relation("ReceivedGifts")
+    wishLists       WishList[]
+    sharedWishLists SharedUsersOnWishLists[]
 }
 
 model VerificationToken {
@@ -63,4 +61,38 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Gift {
+    id         String   @id @default(cuid())
+    name       String
+    link       String?
+    fromUserId String?
+    fromUser   User?    @relation("GivenGifts", fields: [fromUserId], references: [id], onDelete: Cascade)
+    userId     String
+    user       User     @relation("ReceivedGifts", fields: [userId], references: [id], onDelete: Cascade)
+    wishListId String
+    wishList   WishList @relation(fields: [wishListId], references: [id], onDelete: Cascade)
+    position   Int
+
+    @@unique([wishListId, position])
+}
+
+model WishList {
+    id          String                   @id @default(cuid())
+    name        String
+    userId      String
+    user        User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    gifts       Gift[]
+    sharedUsers SharedUsersOnWishLists[]
+}
+
+model SharedUsersOnWishLists {
+    wishListId   String
+    wishList     WishList @relation(fields: [wishListId], references: [id])
+    sharedUserId String
+    sharedUser   User     @relation(fields: [sharedUserId], references: [id])
+    permission   String?
+
+    @@id([wishListId, sharedUserId])
 }
