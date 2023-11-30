@@ -6,9 +6,7 @@ type BottomMenuProps = {
 
 const BottomMenu: FunctionComponent<BottomMenuProps> = (props) => {
   const { children } = props;
-  return (
-    <menu className="absolute bottom-0 z-50 w-screen p-5">{children}</menu>
-  );
+  return <menu className="w-screen p-5">{children}</menu>;
 };
 
 export default BottomMenu;

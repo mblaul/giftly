@@ -8,9 +8,9 @@ export const WishListContainer = () => {
   const { data: userWishLists } = api.wishList.getUserWishLists.useQuery();
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <Header variant={1}>Wish Lists</Header>
-      <div>
+      <div className="flex flex-col gap-4">
         {userWishLists && (
           <WishLists
             canAddAWishList

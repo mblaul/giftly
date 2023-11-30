@@ -46,34 +46,32 @@ const WishListInputForm = () => {
   }
 
   return (
-    <div>
-      <form onSubmit={submitwishList}>
-        <fieldset
-          className="text-black"
-          disabled={isSubmitting}
-          name="wishListInput"
-        >
-          {Object.entries(wishListFormInputs).map(
-            ([_inputName, { htmlInput }]) => {
-              return (
-                <div key={htmlInput.name}>
-                  <label className="text-white" htmlFor={htmlInput.name}>
-                    {htmlInput.label}
-                  </label>
-                  <input
-                    name={htmlInput.name}
-                    type={htmlInput.type}
-                    required={htmlInput.required}
-                    onChange={updatewishListInput}
-                  ></input>
-                </div>
-              );
-            }
-          )}
-        </fieldset>
-        <button type="submit">Click</button>
-      </form>
-    </div>
+    <form className="" onSubmit={submitwishList}>
+      <fieldset
+        className="text-black"
+        disabled={isSubmitting}
+        name="wishListInput"
+      >
+        {Object.entries(wishListFormInputs).map(
+          ([_inputName, { htmlInput }]) => {
+            return (
+              <div key={htmlInput.name}>
+                <label className="text-white" htmlFor={htmlInput.name}>
+                  {htmlInput.label}
+                </label>
+                <input
+                  name={htmlInput.name}
+                  type={htmlInput.type}
+                  required={htmlInput.required}
+                  onChange={updatewishListInput}
+                ></input>
+              </div>
+            );
+          }
+        )}
+      </fieldset>
+      <button type="submit">Click</button>
+    </form>
   );
 };
 

@@ -5,6 +5,7 @@ import { type FunctionComponent } from "react";
 import { type Gift } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Header } from "../Header";
+import Head from "next/head";
 
 type GiftDetailProps = {
   gift: Gift;
@@ -122,6 +123,9 @@ export const WishListDetail: FunctionComponent<WishListDetailProps> = (
   return (
     <div className="text-white">
       <Header variant={1}>{wishList.name}</Header>
+      <span className="flex flex-row gap-2">
+        <Header variant={2}>Gifts</Header>
+      </span>
       {sessionData && sessionData.user.id === wishList.userId && (
         <GiftInputForm
           wishList={wishList}
