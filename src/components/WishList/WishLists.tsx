@@ -1,33 +1,26 @@
-import React from "react";
-import { api } from "~/utils/api";
+import { WishList } from "@prisma/client";
 import Link from "next/link";
-import { Header } from "../Header";
-import WishListInputForm from "./WishListInputForm";
+import React, { FunctionComponent } from "react";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
-export const WishLists = () => {
-  const { data: sharedWishLists } = api.wishList.getSharedWishLists.useQuery();
-  const { data: wishLists } = api.wishList.getUserWishLists.useQuery();
+type WishListProps = {
+  header: string;
+  wishLists: WishList[];
+  canAddAWishList?: boolean;
+};
+
+export const WishLists: FunctionComponent<WishListProps> = (props) => {
+  const { canAddAWishList, header, wishLists } = props;
 
   return (
-    <div className="text-white">
-      <WishListInputForm />
-      <Header variant={1}>Wish Lists</Header>
-      <div>
-        <h2 className="my-2 text-lg">Your Wish Lists</h2>
-        {wishLists &&
-          Array.isArray(wishLists) &&
-          wishLists.map((wishList) => {
-            return (
-              <Link key={wishList.id} href={`/wishLists/${wishList.id}`}>
-                {wishList.name}
-              </Link>
-            );
-          })}
-      </div>
-      <h2 className="my-2 text-lg">Wish Lists Shared With You</h2>
-      {sharedWishLists &&
-        Array.isArray(sharedWishLists) &&
-        sharedWishLists.map((wishList) => {
+    <div>
+      <span className="flex flex-row gap-2">
+        <h2 className="my-2 text-lg">{header}</h2>
+        {canAddAWishList && <PlusIcon className="w-4 stroke-[3px]" />}
+      </span>
+      {wishLists &&
+        Array.isArray(wishLists) &&
+        wishLists.map((wishList) => {
           return (
             <Link key={wishList.id} href={`/wishLists/${wishList.id}`}>
               {wishList.name}

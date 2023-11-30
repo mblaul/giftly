@@ -1,8 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import BottomMenu from "~/components/BottomMenu/BottomMenu";
-import { Header } from "~/components/Header";
-import { WishLists } from "~/components/WishList/WishLists";
+import { WishListContainer } from "~/components/WishList/WishListsContainer";
 
 export default function Home() {
   return (
@@ -15,7 +14,7 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <header className="text-5xl font-bold text-white">Giftly</header>
-          <WishLists />
+          <WishListContainer />
         </div>
         <BottomMenu>
           <AuthShowcase />

@@ -9,7 +9,7 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
   const { children, variant } = props;
   switch (variant) {
     case 1: {
-      return <h1 className="text-lg font-bold">{children}</h1>;
+      return <h1 className="text-xl font-bold">{children}</h1>;
     }
   }
 };
