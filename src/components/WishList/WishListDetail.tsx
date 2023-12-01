@@ -5,7 +5,10 @@ import { type FunctionComponent } from "react";
 import { type Gift } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Header } from "../Header";
-import Head from "next/head";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ArrowSmallUpIcon } from "@heroicons/react/24/outline";
+import { ArrowSmallDownIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 type GiftDetailProps = {
   gift: Gift;
@@ -59,34 +62,48 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
   }
 
   return (
-    <div>
-      {gift.position} - {gift.name} - {gift.link}
+    <div className="flex min-h-[100px] items-center justify-center gap-2 overflow-hidden rounded bg-white bg-opacity-80 p-4 text-black">
+      <div className="flex basis-1/12 flex-col">
+        {gift.position > 1 && (
+          <span onClick={() => moveGift("up")}>
+            <ArrowSmallUpIcon className="w-5" />
+          </span>
+        )}
+        {gift.position < wishListLength && (
+          <span onClick={() => moveGift("down")}>
+            <ArrowSmallDownIcon className="w-5" />
+          </span>
+        )}
+      </div>
+      <div className="flex flex-grow basis-10/12 flex-col overflow-hidden">
+        <span className="self-start">
+          <Header variant={3}>{gift.name}</Header>
+        </span>
+        {gift.link && (
+          <Link
+            className="truncate text-blue-700 underline"
+            target="_blank"
+            href={gift.link}
+          >
+            {gift.link}
+          </Link>
+        )}
+      </div>
       {sessionData?.user.id && (
-        <>
-          <span> - </span>
+        <div className="basis-1/12">
           {sessionData.user.id === gift.userId && (
-            <>
-              {gift.position > 1 && (
-                <span onClick={() => moveGift("up")}>⬆️</span>
-              )}
-              {gift.position < wishListLength && (
-                <span onClick={() => moveGift("down")}>⬇️</span>
-              )}
-              {" - "}
-              <span
-                className="cursor-pointer text-red-600"
-                onClick={deleteGift}
-              >
-                Delete
-              </span>
-            </>
+            <div className="flex flex-row items-center">
+              <div className="cursor-pointer text-red-600" onClick={deleteGift}>
+                <TrashIcon className="w-5" />
+              </div>
+            </div>
           )}
           {sessionData.user.id !== gift.userId && (
             <span className="cursor-pointer text-green-600" onClick={claimGift}>
               Claim
             </span>
           )}
-        </>
+        </div>
       )}
     </div>
   );
@@ -118,6 +135,8 @@ export const WishListDetail: FunctionComponent<WishListDetailProps> = (
     wishListId,
   });
 
+  const canAddAGift = sessionData?.user.id === wishList?.userId;
+
   if (!wishList) return <div>No wishlist found</div>;
 
   return (
@@ -125,6 +144,7 @@ export const WishListDetail: FunctionComponent<WishListDetailProps> = (
       <Header variant={1}>{wishList.name}</Header>
       <span className="flex flex-row gap-2">
         <Header variant={2}>Gifts</Header>
+        {canAddAGift && <PlusIcon className="w-4 stroke-[3px]" />}
       </span>
       {sessionData && sessionData.user.id === wishList.userId && (
         <GiftInputForm
@@ -132,15 +152,17 @@ export const WishListDetail: FunctionComponent<WishListDetailProps> = (
           wishListLength={wishListGifts?.length ?? 0}
         />
       )}
-      {wishListGifts?.map((wishListGift) => {
-        return (
-          <GiftDetail
-            key={wishListGift.id}
-            gift={wishListGift}
-            wishListLength={wishListGifts.length}
-          />
-        );
-      })}
+      <div className="flex flex-col gap-2">
+        {wishListGifts?.map((wishListGift) => {
+          return (
+            <GiftDetail
+              key={wishListGift.id}
+              gift={wishListGift}
+              wishListLength={wishListGifts.length}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };

@@ -14,5 +14,8 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
     case 2: {
       return <h2 className="my-2 text-lg font-bold">{children}</h2>;
     }
+    case 3: {
+      return <h3 className="my-2 text-lg font-semibold">{children}</h3>;
+    }
   }
 };

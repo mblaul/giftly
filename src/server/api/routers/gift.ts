@@ -11,7 +11,7 @@ export const giftRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        link: z.string(),
+        link: z.string().url().optional(),
         wishListId: z.string(),
         position: z.number().gte(0),
       })
