@@ -4,22 +4,32 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { recalculatePositions, repositionAdjacentItems } from "~/utils/list";
+import { repositionAdjacentItems } from "~/utils/list";
 
 export const giftRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
-        link: z.string().url().optional(),
         wishListId: z.string(),
-        position: z.number().gte(0),
       })
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.gift.create({
-        data: { ...input, userId: ctx.session.user.id },
+    .mutation(async ({ ctx, input }) => {
+      const wishListLength = await ctx.prisma.gift.count({
+        where: { wishListId: input.wishListId },
       });
+      const newGift = await ctx.prisma.gift.create({
+        data: { ...input, userId: ctx.session.user.id, position: -1 },
+      });
+
+      await repositionAdjacentItems({
+        ctx,
+        gift: newGift,
+        wishListLength,
+        newGiftPosition: 1,
+      });
+
+      return newGift;
     }),
 
   delete: protectedProcedure
@@ -47,7 +57,11 @@ export const giftRouter = createTRPCRouter({
       // No re-positioning needed if at the end of the list
       if (gift.position === wishListLength) return;
 
-      await repositionAdjacentItems(ctx, gift, wishListLength);
+      await repositionAdjacentItems({
+        ctx,
+        gift,
+        newGiftPosition: wishListLength,
+      });
     }),
   claim: protectedProcedure
     .input(z.object({ giftId: z.string() }))
@@ -94,7 +108,11 @@ export const giftRouter = createTRPCRouter({
         data: { position: -1 },
       });
 
-      await repositionAdjacentItems(ctx, gift, input.position);
+      await repositionAdjacentItems({
+        ctx,
+        gift,
+        newGiftPosition: input.position,
+      });
 
       return await ctx.prisma.gift.update({
         where: { id: input.giftId },

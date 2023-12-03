@@ -9,6 +9,8 @@ import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ArrowSmallUpIcon } from "@heroicons/react/24/outline";
 import { ArrowSmallDownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { Dialog } from "../General/Dialog";
+import { AddNewGift } from "../General/AddNewGift";
 
 type GiftDetailProps = {
   gift: Gift;
@@ -142,16 +144,10 @@ export const WishListDetail: FunctionComponent<WishListDetailProps> = (
   return (
     <div className="text-white">
       <Header variant={1}>{wishList.name}</Header>
-      <span className="flex flex-row gap-2">
+      <span className="flex flex-row items-center gap-2">
         <Header variant={2}>Gifts</Header>
-        {canAddAGift && <PlusIcon className="w-4 stroke-[3px]" />}
+        {canAddAGift && <AddNewGift wishListId={wishList.id} />}
       </span>
-      {sessionData && sessionData.user.id === wishList.userId && (
-        <GiftInputForm
-          wishList={wishList}
-          wishListLength={wishListGifts?.length ?? 0}
-        />
-      )}
       <div className="flex flex-col gap-2">
         {wishListGifts?.map((wishListGift) => {
           return (
