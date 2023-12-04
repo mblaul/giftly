@@ -1,15 +1,13 @@
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import { GiftInputForm } from "./GiftInputForm";
 import { type FunctionComponent } from "react";
 import { type Gift } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Header } from "../Header";
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { ArrowSmallUpIcon } from "@heroicons/react/24/outline";
 import { ArrowSmallDownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { Dialog } from "../General/Dialog";
 import { AddNewGift } from "../General/AddNewGift";
 
 type GiftDetailProps = {
@@ -79,6 +77,7 @@ const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
       </div>
       <div className="flex flex-grow basis-10/12 flex-col overflow-hidden">
         <span className="self-start">
+          {gift.position}
           <Header variant={3}>{gift.name}</Header>
         </span>
         {gift.link && (

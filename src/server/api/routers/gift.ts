@@ -29,7 +29,10 @@ export const giftRouter = createTRPCRouter({
         newGiftPosition: 1,
       });
 
-      return newGift;
+      return await ctx.prisma.gift.update({
+        where: { id: newGift.id },
+        data: { position: 1 },
+      });
     }),
 
   delete: protectedProcedure
