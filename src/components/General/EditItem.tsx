@@ -83,8 +83,8 @@ export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
   }
 
   return (
-    <div className="flex flex-row items-center">
-      <form>
+    <div className="flex flex-grow flex-row items-center gap-2">
+      <form className="overflow-hidden">
         <fieldset
           className="flex flex-auto flex-col"
           disabled={!isEditModeEnabled}
@@ -97,7 +97,7 @@ export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
                   key={htmlInput.name}
                   name={htmlInput.name}
                   className={classnames(
-                    "min-w-0 rounded border-2 border-solid p-2",
+                    "w-full min-w-0 rounded border-2 border-solid p-2",
                     className,
                     { "border-transparent bg-white": !isEditModeEnabled },
                     { "border-black bg-slate-200": isEditModeEnabled }
@@ -113,44 +113,38 @@ export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
           )}
         </fieldset>
       </form>
-      <div className="basis-1/6">
+      <div className="flex basis-1/6 flex-col items-center justify-center">
         {sessionData?.user.id && (
-          <div>
+          <>
             {sessionData.user.id === gift.userId && (
               <>
                 {isEditModeEnabled && (
-                  <>
-                    <div className="flex flex-row items-center">
-                      <div
-                        className="cursor-pointer text-red-600"
-                        onClick={deleteGift}
-                      >
-                        <TrashIcon className="w-5" />
-                      </div>
+                  <div className="flex flex-grow flex-col items-center justify-center gap-2">
+                    <div
+                      className="cursor-pointer text-red-600"
+                      onClick={deleteGift}
+                    >
+                      <TrashIcon className="w-5" />
                     </div>
-                    <div className="flex flex-row items-center">
-                      <div
-                        className="cursor-pointer text-green-600"
-                        onClick={submitEdit}
-                      >
-                        <CheckIcon className="w-5" />
-                      </div>
+                    <div
+                      className="cursor-pointer text-green-600"
+                      onClick={submitEdit}
+                    >
+                      <CheckIcon className="w-5" />
                     </div>
-                  </>
+                  </div>
                 )}
                 {!isEditModeEnabled && (
-                  <div className="flex flex-row items-center">
-                    <div
-                      className="cursor-pointer text-gray-500"
-                      onClick={() => setIsEditModeEnabled(true)}
-                    >
-                      <PencilIcon className="w-5" />
-                    </div>
+                  <div
+                    className="cursor-pointer text-gray-500"
+                    onClick={() => setIsEditModeEnabled(true)}
+                  >
+                    <PencilIcon className="w-5" />
                   </div>
                 )}
               </>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>

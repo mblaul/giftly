@@ -1,17 +1,12 @@
 import {
   ArrowSmallDownIcon,
   ArrowSmallUpIcon,
-  CheckIcon,
-  PencilIcon,
-  TrashIcon,
 } from "@heroicons/react/24/outline";
 import { Gift } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import React, { FunctionComponent } from "react";
 import { api } from "~/utils/api";
 import { EditItem } from "../General/EditItem";
-import { Header } from "../Header";
-import Link from "next/link";
 
 type GiftDetailProps = {
   gift: Gift;
@@ -52,8 +47,8 @@ export const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
   }
 
   return (
-    <div className="flex min-h-[100px] items-center justify-center gap-2 overflow-hidden rounded bg-white p-4 text-black">
-      <div className="flex basis-1/12 flex-col">
+    <div className="flex min-h-[100px] items-center justify-center gap-2 rounded bg-white p-4 text-black">
+      <div className="">
         {gift.position > 1 && (
           <span onClick={() => moveGift("up")}>
             <ArrowSmallUpIcon className="w-5" />
@@ -65,16 +60,16 @@ export const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
           </span>
         )}
       </div>
-      <div className="basis-11/12">
+      <div className="">
         <EditItem gift={gift} />
       </div>
-      <div>
+      {/* <div>
         {sessionData?.user.id !== gift.userId && (
           <span className="cursor-pointer text-green-600" onClick={claimGift}>
             Claim
           </span>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
