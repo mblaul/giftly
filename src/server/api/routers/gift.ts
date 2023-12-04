@@ -34,7 +34,20 @@ export const giftRouter = createTRPCRouter({
         data: { position: 1 },
       });
     }),
-
+  update: protectedProcedure
+    .input(
+      z.object({
+        giftId: z.string(),
+        name: z.string(),
+        link: z.string().url().nullable(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.gift.update({
+        where: { id: input.giftId, userId: ctx.session.user.id },
+        data: { name: input.name, link: input.link },
+      });
+    }),
   delete: protectedProcedure
     .input(z.object({ giftId: z.string(), wishListId: z.string() }))
     .mutation(async ({ ctx, input }) => {
