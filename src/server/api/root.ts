@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { giftRouter } from "./routers/gift";
+import { tokenRouter } from "./routers/token";
 import { wishListRouter } from "./routers/wishList";
 
 /**
@@ -9,6 +10,7 @@ import { wishListRouter } from "./routers/wishList";
  */
 export const appRouter = createTRPCRouter({
   gift: giftRouter,
+  token: tokenRouter,
   wishList: wishListRouter,
 });
 

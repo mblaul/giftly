@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Layout } from "~/components/Layout";
-import { WishListRouter } from "~/components/WishList/WishListDetail";
+import { PrivateWishListRouter } from "~/components/WishList/PrivateWishListRouter";
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <WishListRouter />
+        <PrivateWishListRouter />
       </Layout>
     </>
   );

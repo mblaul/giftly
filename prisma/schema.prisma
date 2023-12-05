@@ -84,6 +84,7 @@ model WishList {
     userId      String
     user        User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
     gifts       Gift[]
+    token       Token?
     sharedUsers SharedUsersOnWishLists[]
 }
 
@@ -95,4 +96,10 @@ model SharedUsersOnWishLists {
     permission   String?
 
     @@id([wishListId, sharedUserId])
+}
+
+model Token {
+    id         String    @id @default(cuid())
+    wishListId String?   @unique
+    wishList   WishList? @relation(fields: [wishListId], references: [id])
 }
