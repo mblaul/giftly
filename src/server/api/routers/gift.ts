@@ -79,23 +79,22 @@ export const giftRouter = createTRPCRouter({
         newGiftPosition: wishListLength,
       });
     }),
-  claim: protectedProcedure
+  claim: publicProcedure
     .input(z.object({ giftId: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.gift
         .update({
           where: {
             id: input.giftId,
-            wishList: {
-              sharedUsers: { some: { sharedUserId: ctx.session.user.id } },
-            },
+            claimed: false,
           },
           data: {
-            fromUserId: ctx.session.user.id,
+            claimed: true,
+            fromUserId: ctx?.session?.user.id || null,
           },
         })
         .catch((err) => {
-          return new Error("You are not allowed to claim this gift");
+          return new Error("This gift has been claimed already.");
         });
     }),
   move: protectedProcedure

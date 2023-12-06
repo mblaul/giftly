@@ -32,10 +32,10 @@ export const TokenActions: FunctionComponent<TokenActionProps> = (props) => {
           onClick={copyLink}
         >
           <span>Copy Public Link</span>
-          <LinkIcon className="w-5" />
+          <LinkIcon className="w-6" />
         </div>
       ) : (
-        <PlusIcon className="w-5" onClick={createWishListToken} />
+        <PlusIcon className="w-6" onClick={createWishListToken} />
       )}
     </div>
   );

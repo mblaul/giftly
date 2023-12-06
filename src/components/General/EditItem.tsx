@@ -124,13 +124,13 @@ export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
                       className="cursor-pointer text-red-600"
                       onClick={deleteGift}
                     >
-                      <TrashIcon className="w-5" />
+                      <TrashIcon className="w-6" />
                     </div>
                     <div
                       className="cursor-pointer text-green-600"
                       onClick={submitEdit}
                     >
-                      <CheckIcon className="w-5" />
+                      <CheckIcon className="w-6" />
                     </div>
                   </div>
                 )}
@@ -139,7 +139,7 @@ export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
                     className="cursor-pointer text-gray-500"
                     onClick={() => setIsEditModeEnabled(true)}
                   >
-                    <PencilIcon className="w-5" />
+                    <PencilIcon className="w-6" />
                   </div>
                 )}
               </>

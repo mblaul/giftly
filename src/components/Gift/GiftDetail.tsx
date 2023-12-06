@@ -1,6 +1,7 @@
 import {
   ArrowSmallDownIcon,
   ArrowSmallUpIcon,
+  GiftIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
 import { Gift } from "@prisma/client";
@@ -8,6 +9,8 @@ import { useSession } from "next-auth/react";
 import React, { FunctionComponent } from "react";
 import { api } from "~/utils/api";
 import { EditItem } from "../General/EditItem";
+import { ClaimGift } from "./ClaimGift";
+import { Loading } from "../General/Loading";
 
 type GiftDetailProps = {
   gift: Gift;
@@ -18,18 +21,6 @@ export const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
   const { gift, wishListLength } = props;
   const utils = api.useContext();
   const { data: sessionData } = useSession();
-
-  const giftClaimMutation = api.gift.claim.useMutation({
-    onSettled: () => {
-      utils.wishList.getWishList.invalidate();
-    },
-  });
-
-  function claimGift() {
-    giftClaimMutation.mutate({
-      giftId: gift.id,
-    });
-  }
 
   const giftMoveMutation = api.gift.move.useMutation({
     onSettled: () => {
@@ -54,23 +45,21 @@ export const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
         <div>
           {gift.position > 1 && (
             <span onClick={() => moveGift("up")}>
-              <ArrowSmallUpIcon className="w-5" />
+              <ArrowSmallUpIcon className="w-6" />
             </span>
           )}
           {gift.position < wishListLength && (
             <span onClick={() => moveGift("down")}>
-              <ArrowSmallDownIcon className="w-5" />
+              <ArrowSmallDownIcon className="w-6" />
             </span>
           )}
         </div>
       )}
-      <div className="">
+      <div>
         <EditItem gift={gift} />
       </div>
       <div>
-        {sessionData?.user.id !== gift.userId && (
-          <TagIcon className="w-5" onClick={claimGift} />
-        )}
+        <ClaimGift gift={gift} />
       </div>
     </div>
   );

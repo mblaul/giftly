@@ -20,7 +20,7 @@ export const WishListDetail: FunctionComponent<WishListDetailProps> = (
   const canAddAGift = sessionData?.user.id === wishList?.userId;
 
   return (
-    <div className="text-white">
+    <div className="flex flex-col gap-3 text-white">
       <Header variant={1}>{wishList.name}</Header>
       {sessionData?.user && <TokenActions wishList={wishList} />}
       <span className="flex flex-row items-center gap-2">

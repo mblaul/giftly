@@ -74,6 +74,7 @@ model Gift {
     wishListId String
     wishList   WishList @relation(fields: [wishListId], references: [id], onDelete: Cascade)
     position   Int
+    claimed    Boolean  @default(false)
 
     @@unique([wishListId, position])
 }
