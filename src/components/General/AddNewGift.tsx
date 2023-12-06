@@ -11,8 +11,8 @@ export const AddNewGift: FunctionComponent<AddNewGiftProps> = (props) => {
 
   const utils = api.useContext();
   const giftMutation = api.gift.create.useMutation({
-    onSettled: async () => {
-      await utils.gift.getWishListGifts.invalidate();
+    onSettled: () => {
+      utils.wishList.getWishList.invalidate();
     },
   });
 

@@ -18,7 +18,7 @@ export const wishListRouter = createTRPCRouter({
     .query(({ ctx, input }) => {
       return ctx.prisma.wishList.findUnique({
         where: { id: input.wishListId },
-        include: { gifts: true },
+        include: { gifts: true, token: true },
       });
     }),
   getUserWishLists: protectedProcedure.query(({ ctx }) => {

@@ -1,4 +1,3 @@
-import { api } from "~/utils/api";
 import { type FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
 import { Header } from "../Header";
@@ -6,10 +5,10 @@ import { AddNewGift } from "../General/AddNewGift";
 import React from "react";
 import { GiftDetail } from "../Gift/GiftDetail";
 import { TokenActions } from "../Token/TokenActions";
-import { Gift, Token, WishList } from "@prisma/client";
+import { WishListAsProp } from "~/types";
 
 type WishListDetailProps = {
-  wishList: WishList & { gifts?: Gift[] } & { token?: Token };
+  wishList: WishListAsProp;
 };
 
 export const WishListDetail: FunctionComponent<WishListDetailProps> = (
@@ -23,17 +22,17 @@ export const WishListDetail: FunctionComponent<WishListDetailProps> = (
   return (
     <div className="text-white">
       <Header variant={1}>{wishList.name}</Header>
-      <TokenActions wishList={wishList} />
+      {sessionData?.user && <TokenActions wishList={wishList} />}
       <span className="flex flex-row items-center gap-2">
         <Header variant={2}>Gifts</Header>
         {canAddAGift && <AddNewGift wishListId={wishList.id} />}
       </span>
       <div className="flex flex-col gap-2">
-        {wishList.gifts?.map((wishListGift) => {
+        {wishList.gifts?.map((gift) => {
           return (
             <GiftDetail
-              key={wishListGift.id}
-              gift={wishListGift}
+              key={gift.id}
+              gift={gift}
               wishListLength={wishList.gifts?.length ?? 0}
             />
           );

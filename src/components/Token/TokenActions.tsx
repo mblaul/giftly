@@ -1,12 +1,11 @@
-import { PlusIcon } from "@heroicons/react/24/outline";
-import type { WishList, Token, Gift } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { LinkIcon, PlusIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import React, { FunctionComponent } from "react";
+import { WishListAsProp } from "~/types";
 import { api } from "~/utils/api";
 
 type TokenActionProps = {
-  wishList: WishList & { token?: Token } & { gifts?: Gift[] };
+  wishList: WishListAsProp;
 };
 
 export const TokenActions: FunctionComponent<TokenActionProps> = (props) => {
@@ -19,16 +18,24 @@ export const TokenActions: FunctionComponent<TokenActionProps> = (props) => {
     });
   }
 
+  function copyLink() {
+    if (!wishList?.token?.id) return;
+    const link = `${window.location.origin}/public/wishLists/${wishList.token.id}`;
+    navigator.clipboard.writeText(link);
+  }
+
   return (
     <div>
       {wishList.token ? (
-        <Link href={`/public/wishLists/${wishList.token.id}`}>
-          Link to public
-        </Link>
-      ) : (
-        <div onClick={createWishListToken}>
-          <PlusIcon className="w-5" />
+        <div
+          className="inline-flex flex-row gap-2 rounded bg-white p-2 text-black"
+          onClick={copyLink}
+        >
+          <span>Copy Public Link</span>
+          <LinkIcon className="w-5" />
         </div>
+      ) : (
+        <PlusIcon className="w-5" onClick={createWishListToken} />
       )}
     </div>
   );

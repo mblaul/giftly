@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import { api } from "~/utils/api";
 import { WishListDetail } from "./WishListDetail";

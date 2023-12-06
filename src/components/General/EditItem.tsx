@@ -43,8 +43,8 @@ export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
   const utils = api.useContext();
 
   const giftEditMutation = api.gift.update.useMutation({
-    onSettled: async () => {
-      await utils.gift.getWishListGifts.invalidate();
+    onSettled: () => {
+      utils.wishList.getWishList.invalidate();
     },
   });
 
@@ -63,8 +63,8 @@ export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
   }
 
   const giftDeleteMutation = api.gift.delete.useMutation({
-    onSettled: async () => {
-      await utils.gift.getWishListGifts.invalidate();
+    onSettled: () => {
+      utils.wishList.getWishList.invalidate();
     },
   });
 
