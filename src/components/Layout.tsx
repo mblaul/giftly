@@ -14,7 +14,7 @@ export const Layout = ({ children }: LayoutProps) => (
       </header>
       {children}
     </div>
-    <div className="flex-basis-1/6">
+    <div className="flex-basis-1/6 sticky bottom-0 bg-[#15162c]">
       <BottomMenu>
         <AuthShowcase />
       </BottomMenu>

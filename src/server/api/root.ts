@@ -2,6 +2,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import { giftRouter } from "./routers/gift";
 import { tokenRouter } from "./routers/token";
 import { wishListRouter } from "./routers/wishList";
+import { userRouter } from "./routers/user";
 
 /**
  * This is the primary router for your server.
@@ -11,6 +12,7 @@ import { wishListRouter } from "./routers/wishList";
 export const appRouter = createTRPCRouter({
   gift: giftRouter,
   token: tokenRouter,
+  user: userRouter,
   wishList: wishListRouter,
 });
 
