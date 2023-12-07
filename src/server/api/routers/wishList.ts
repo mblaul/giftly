@@ -1,4 +1,3 @@
-import { CssSyntaxError } from "postcss";
 import { z } from "zod";
 import {
   createTRPCRouter,
@@ -19,6 +18,7 @@ export const wishListRouter = createTRPCRouter({
     .query(({ ctx, input }) => {
       return ctx.prisma.wishList.findUnique({
         where: { id: input.wishListId },
+        include: { gifts: true, token: true },
       });
     }),
   getUserWishLists: protectedProcedure.query(({ ctx }) => {
@@ -31,4 +31,18 @@ export const wishListRouter = createTRPCRouter({
       where: { sharedUsers: { some: { sharedUserId: ctx.session.user.id } } },
     });
   }),
+  getPublicWishList: publicProcedure
+    .input(z.object({ tokenId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.wishList.findFirst({
+        where: {
+          token: {
+            id: input.tokenId,
+          },
+        },
+        include: {
+          gifts: true,
+        },
+      });
+    }),
 });

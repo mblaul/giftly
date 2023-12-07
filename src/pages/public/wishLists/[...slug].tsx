@@ -1,8 +1,9 @@
-import Head from "next/head";
+import React from "react";
+import { PublicTokenRouter } from "~/components/Token/PublicTokenRouter";
 import { Layout } from "~/components/Layout";
-import { PrivateWishListRouter } from "~/components/WishList/PrivateWishListRouter";
+import Head from "next/head";
 
-export default function Home() {
+export default function Public() {
   return (
     <>
       <Head>
@@ -11,7 +12,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <PrivateWishListRouter />
+        <PublicTokenRouter />
       </Layout>
     </>
   );

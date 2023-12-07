@@ -4,24 +4,50 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { recalculatePositions, repositionAdjacentItems } from "~/utils/list";
+import { repositionAdjacentItems } from "~/utils/list";
 
 export const giftRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
-        link: z.string(),
         wishListId: z.string(),
-        position: z.number().gte(0),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const wishListLength = await ctx.prisma.gift.count({
+        where: { wishListId: input.wishListId },
+      });
+      const newGift = await ctx.prisma.gift.create({
+        data: { ...input, userId: ctx.session.user.id, position: -1 },
+      });
+
+      await repositionAdjacentItems({
+        ctx,
+        gift: newGift,
+        wishListLength,
+        newGiftPosition: 1,
+      });
+
+      return await ctx.prisma.gift.update({
+        where: { id: newGift.id },
+        data: { position: 1 },
+      });
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        giftId: z.string(),
+        name: z.string(),
+        link: z.string().url().nullable(),
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.gift.create({
-        data: { ...input, userId: ctx.session.user.id },
+      return ctx.prisma.gift.update({
+        where: { id: input.giftId, userId: ctx.session.user.id },
+        data: { name: input.name, link: input.link },
       });
     }),
-
   delete: protectedProcedure
     .input(z.object({ giftId: z.string(), wishListId: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -47,25 +73,28 @@ export const giftRouter = createTRPCRouter({
       // No re-positioning needed if at the end of the list
       if (gift.position === wishListLength) return;
 
-      await repositionAdjacentItems(ctx, gift, wishListLength);
+      await repositionAdjacentItems({
+        ctx,
+        gift,
+        newGiftPosition: wishListLength,
+      });
     }),
-  claim: protectedProcedure
+  claim: publicProcedure
     .input(z.object({ giftId: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.gift
         .update({
           where: {
             id: input.giftId,
-            wishList: {
-              sharedUsers: { some: { sharedUserId: ctx.session.user.id } },
-            },
+            claimed: false,
           },
           data: {
-            fromUserId: ctx.session.user.id,
+            claimed: true,
+            fromUserId: ctx?.session?.user.id || null,
           },
         })
         .catch((err) => {
-          return new Error("You are not allowed to claim this gift");
+          return new Error("This gift has been claimed already.");
         });
     }),
   move: protectedProcedure
@@ -94,7 +123,11 @@ export const giftRouter = createTRPCRouter({
         data: { position: -1 },
       });
 
-      await repositionAdjacentItems(ctx, gift, input.position);
+      await repositionAdjacentItems({
+        ctx,
+        gift,
+        newGiftPosition: input.position,
+      });
 
       return await ctx.prisma.gift.update({
         where: { id: input.giftId },

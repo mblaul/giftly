@@ -1,13 +1,35 @@
-import { Gift, Prisma } from "@prisma/client";
+import { Gift } from "@prisma/client";
 
-export function recalculatePositions(
-  listItemPosition: number,
-  newListItemPosition: number
-) {
+type RecalculatePositionsArgs = {
+  listItemPosition: number;
+  listLength?: number;
+  newListItemPosition: number;
+};
+
+export function recalculatePositions(args: RecalculatePositionsArgs) {
+  const { listItemPosition, newListItemPosition, listLength } = args;
   if (listItemPosition === newListItemPosition)
-    throw new Error("Why try that?");
+    throw new Error("No repositioning required");
+
+  // New item has been added
+  if (listItemPosition === -1) {
+    if (listLength === undefined)
+      throw new Error("List length is required when adding new option");
+    const newPositions = new Map<number, number>();
+    for (
+      let i = newListItemPosition;
+      i < newListItemPosition + listLength;
+      i++
+    ) {
+      newPositions.set(i, i + 1);
+    }
+
+    return new Map([...newPositions].reverse());
+    // return newPositions;
+  }
+
+  // Item has been moved up
   if (listItemPosition > newListItemPosition) {
-    // Item has been moved up
     const moveLength = listItemPosition - newListItemPosition;
     const newPositions = new Map<number, number>();
     for (
@@ -19,8 +41,9 @@ export function recalculatePositions(
     }
     return newPositions;
   }
+
+  // Item has been moved down
   if (listItemPosition < newListItemPosition) {
-    // Item has been moved down
     const newPositions = new Map<number, number>();
     for (let i = listItemPosition; i < newListItemPosition; i++) {
       newPositions.set(i + 1, i);
@@ -29,12 +52,22 @@ export function recalculatePositions(
   }
 }
 
+type RepositionAdjacentItemsArgs = {
+  wishListLength?: number;
+  ctx: any;
+  gift: Gift;
+  newGiftPosition: number;
+};
+
 export async function repositionAdjacentItems(
-  ctx: any,
-  gift: Gift,
-  newGiftPosition: number
+  args: RepositionAdjacentItemsArgs
 ) {
-  const newPositions = recalculatePositions(gift.position, newGiftPosition);
+  const { wishListLength, ctx, gift, newGiftPosition } = args;
+  const newPositions = recalculatePositions({
+    listItemPosition: gift.position,
+    newListItemPosition: newGiftPosition,
+    listLength: wishListLength,
+  });
 
   if (!newPositions) return;
 
