@@ -2,7 +2,7 @@ import { Gift } from ".prisma/client";
 import { CheckIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import classnames from "classnames";
 import { useSession } from "next-auth/react";
-import React, { FunctionComponent, SyntheticEvent } from "react";
+import { SyntheticEvent, useState } from "react";
 import { api } from "~/utils/api";
 
 const giftFormInputs = {
@@ -30,9 +30,9 @@ type GiftInputFormProps = {
   gift: Gift;
 };
 
-export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
+export const EditItem = (props: GiftInputFormProps) => {
   const { gift } = props;
-  const [isEditModeEnabled, setIsEditModeEnabled] = React.useState(false);
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
 
   const initialGiftInputState = {
     name: gift.name,
@@ -75,7 +75,7 @@ export const EditItem: FunctionComponent<GiftInputFormProps> = (props) => {
     });
   }
 
-  const [giftInput, setGiftInput] = React.useState(initialGiftInputState);
+  const [giftInput, setGiftInput] = useState(initialGiftInputState);
 
   function updateGiftInput(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;

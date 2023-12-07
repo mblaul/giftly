@@ -1,6 +1,5 @@
 import { WishList } from "@prisma/client";
 import Link from "next/link";
-import React, { FunctionComponent } from "react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Header } from "../Header";
 
@@ -10,7 +9,7 @@ type WishListProps = {
   canAddAWishList?: boolean;
 };
 
-export const WishLists: FunctionComponent<WishListProps> = (props) => {
+export const WishLists = (props: WishListProps) => {
   const { canAddAWishList, header, wishLists } = props;
 
   return (

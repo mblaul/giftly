@@ -1,14 +1,13 @@
 import { GiftIcon } from "@heroicons/react/24/outline";
 import { Gift } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import React, { FunctionComponent } from "react";
 import { api } from "~/utils/api";
 
 type ClaimGiftProps = {
   gift: Gift;
 };
 
-export const ClaimGift: FunctionComponent<ClaimGiftProps> = (props) => {
+export const ClaimGift = (props: ClaimGiftProps) => {
   const { gift } = props;
   const utils = api.useContext();
   const { data: sessionData } = useSession();

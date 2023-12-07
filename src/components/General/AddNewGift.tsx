@@ -1,12 +1,11 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
-import React, { FunctionComponent } from "react";
 import { api } from "~/utils/api";
 
 type AddNewGiftProps = {
   wishListId: string;
 };
 
-export const AddNewGift: FunctionComponent<AddNewGiftProps> = (props) => {
+export const AddNewGift = (props: AddNewGiftProps) => {
   const { wishListId } = props;
 
   const utils = api.useContext();

@@ -1,4 +1,3 @@
-import { type FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
 import { Header } from "../Header";
 import { AddNewGift } from "../General/AddNewGift";
@@ -11,9 +10,7 @@ type WishListDetailProps = {
   wishList: WishListAsProp;
 };
 
-export const WishListDetail: FunctionComponent<WishListDetailProps> = (
-  props
-) => {
+export const WishListDetail = (props: WishListDetailProps) => {
   const { wishList } = props;
   const { data: sessionData } = useSession();
 

@@ -1,23 +1,19 @@
 import {
   ArrowSmallDownIcon,
   ArrowSmallUpIcon,
-  GiftIcon,
-  TagIcon,
 } from "@heroicons/react/24/outline";
 import { Gift } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import React, { FunctionComponent } from "react";
 import { api } from "~/utils/api";
 import { EditItem } from "../General/EditItem";
 import { ClaimGift } from "./ClaimGift";
-import { Loading } from "../General/Loading";
 
 type GiftDetailProps = {
   gift: Gift;
   wishListLength: number;
 };
 
-export const GiftDetail: FunctionComponent<GiftDetailProps> = (props) => {
+export const GiftDetail = (props: GiftDetailProps) => {
   const { gift, wishListLength } = props;
   const utils = api.useContext();
   const { data: sessionData } = useSession();

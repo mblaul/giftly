@@ -1,11 +1,11 @@
-import React, { FunctionComponent, ReactNode } from "react";
+import { ReactNode } from "react";
 
 type HeaderProps = {
   children: ReactNode;
   variant: number;
 };
 
-export const Header: FunctionComponent<HeaderProps> = (props) => {
+export const Header = (props: HeaderProps) => {
   const { children, variant } = props;
   switch (variant) {
     case 1: {

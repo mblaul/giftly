@@ -1,6 +1,4 @@
 import { LinkIcon, PlusIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import React, { FunctionComponent } from "react";
 import { WishListAsProp } from "~/types";
 import { api } from "~/utils/api";
 
@@ -8,7 +6,7 @@ type TokenActionProps = {
   wishList: WishListAsProp;
 };
 
-export const TokenActions: FunctionComponent<TokenActionProps> = (props) => {
+export const TokenActions = (props: TokenActionProps) => {
   const { wishList } = props;
   const wishListMutation = api.token.createWishListToken.useMutation();
 

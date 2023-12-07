@@ -1,12 +1,11 @@
-import { close } from "inspector";
-import React, { FunctionComponent, ReactNode, useRef } from "react";
+import { ReactNode, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 type DialogProps = {
   children: ReactNode;
 };
 
-export const Dialog: FunctionComponent<DialogProps> = (props) => {
+export const Dialog = (props: DialogProps) => {
   const { children } = props;
   const idRef = useRef(uuidv4());
   const dialogRef = useRef(null);
