@@ -9,12 +9,13 @@ import { EditItem } from "../General/EditItem";
 import { ClaimGift } from "./ClaimGift";
 
 type GiftDetailProps = {
+  mountInEditMode?: boolean;
   gift: Gift;
   wishListLength: number;
 };
 
 export const GiftDetail = (props: GiftDetailProps) => {
-  const { gift, wishListLength } = props;
+  const { gift, mountInEditMode = false, wishListLength } = props;
   const utils = api.useContext();
   const { data: sessionData } = useSession();
 
@@ -52,7 +53,7 @@ export const GiftDetail = (props: GiftDetailProps) => {
         </div>
       )}
       <div>
-        <EditItem gift={gift} />
+        <EditItem mountInEditMode={mountInEditMode} gift={gift} />
       </div>
       <div>
         <ClaimGift gift={gift} />

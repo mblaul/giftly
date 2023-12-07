@@ -1,10 +1,10 @@
 import { useSession } from "next-auth/react";
 import { Header } from "../Header";
 import { AddNewGift } from "../General/AddNewGift";
-import React from "react";
 import { GiftDetail } from "../Gift/GiftDetail";
 import { TokenActions } from "../Token/TokenActions";
 import { WishListAsProp } from "~/types";
+import { useEffect, useRef, useState } from "react";
 
 type WishListDetailProps = {
   wishList: WishListAsProp;
@@ -13,6 +13,7 @@ type WishListDetailProps = {
 export const WishListDetail = (props: WishListDetailProps) => {
   const { wishList } = props;
   const { data: sessionData } = useSession();
+  const originalGiftIds = useRef(wishList.gifts?.map((gift) => gift.id));
 
   const canAddAGift = sessionData?.user.id === wishList?.userId;
 
@@ -25,9 +26,15 @@ export const WishListDetail = (props: WishListDetailProps) => {
         {canAddAGift && <AddNewGift wishListId={wishList.id} />}
       </span>
       <div className="flex flex-col gap-2">
-        {wishList.gifts?.map((gift) => {
+        {wishList.gifts?.map((gift, index) => {
+          const isNewGift =
+            index === 0 &&
+            originalGiftIds.current &&
+            !originalGiftIds.current.includes(gift.id);
+
           return (
             <GiftDetail
+              mountInEditMode={isNewGift}
               key={gift.id}
               gift={gift}
               wishListLength={wishList.gifts?.length ?? 0}

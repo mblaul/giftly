@@ -2,7 +2,7 @@ import { Gift } from ".prisma/client";
 import { CheckIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import classnames from "classnames";
 import { useSession } from "next-auth/react";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useCallback, useState } from "react";
 import { api } from "~/utils/api";
 
 const giftFormInputs = {
@@ -28,11 +28,12 @@ const giftFormInputs = {
 
 type GiftInputFormProps = {
   gift: Gift;
+  mountInEditMode?: boolean;
 };
 
 export const EditItem = (props: GiftInputFormProps) => {
-  const { gift } = props;
-  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
+  const { gift, mountInEditMode = false } = props;
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(mountInEditMode);
 
   const initialGiftInputState = {
     name: gift.name,
@@ -43,7 +44,7 @@ export const EditItem = (props: GiftInputFormProps) => {
   const utils = api.useContext();
 
   const giftEditMutation = api.gift.update.useMutation({
-    onSettled: () => {
+    onSuccess: () => {
       utils.wishList.getWishList.invalidate();
     },
   });
@@ -82,6 +83,10 @@ export const EditItem = (props: GiftInputFormProps) => {
     setGiftInput({ ...giftInput, [name]: value });
   }
 
+  const autoFocusCallback = useCallback((inputElement: HTMLInputElement) => {
+    if (inputElement && mountInEditMode) inputElement.focus();
+  }, []);
+
   return (
     <div className="flex flex-grow flex-row items-center gap-2">
       <form className="overflow-hidden">
@@ -92,6 +97,8 @@ export const EditItem = (props: GiftInputFormProps) => {
         >
           {Object.entries(giftFormInputs).map(
             ([inputName, { className, htmlInput }]) => {
+              const autoFocusRef =
+                htmlInput.name === "name" ? autoFocusCallback : undefined;
               return (
                 <input
                   key={htmlInput.name}
@@ -107,6 +114,7 @@ export const EditItem = (props: GiftInputFormProps) => {
                   onChange={updateGiftInput}
                   //@ts-ignore
                   value={giftInput[inputName]}
+                  ref={autoFocusRef}
                 ></input>
               );
             }
